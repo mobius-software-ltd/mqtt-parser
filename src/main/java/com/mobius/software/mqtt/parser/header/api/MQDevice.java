@@ -2,8 +2,7 @@ package com.mobius.software.mqtt.parser.header.api;
 
 import java.util.List;
 
-import ua.mobius.media.server.utils.Text;
-
+import com.mobius.software.mqtt.parser.Text;
 import com.mobius.software.mqtt.parser.Topic;
 import com.mobius.software.mqtt.parser.Will;
 import com.mobius.software.mqtt.parser.header.impl.ConnackCode;

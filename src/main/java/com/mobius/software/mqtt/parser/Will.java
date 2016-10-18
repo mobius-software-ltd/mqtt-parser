@@ -44,7 +44,7 @@ public class Will
 		this.content = content;
 	}
 
-	public Boolean setRetain()
+	public Boolean getRetain()
 	{
 		return retain;
 	}

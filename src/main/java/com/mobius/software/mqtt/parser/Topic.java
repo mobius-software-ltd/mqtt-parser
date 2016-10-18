@@ -1,7 +1,5 @@
 package com.mobius.software.mqtt.parser;
 
-import ua.mobius.media.server.utils.Text;
-
 public class Topic
 {
 	private static final String SEPARATOR = ":";

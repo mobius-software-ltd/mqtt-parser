@@ -1,9 +1,8 @@
 package com.mobius.software.mqtt.parser.header.impl;
 
+import com.mobius.software.mqtt.parser.Text;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
-
-import ua.mobius.media.server.utils.Text;
 
 public class Unsubscribe implements CountableMessage
 {

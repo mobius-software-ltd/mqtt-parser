@@ -7,8 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ua.mobius.media.server.utils.Text;
-
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 import com.mobius.software.mqtt.parser.header.impl.*;
 
@@ -332,7 +330,7 @@ public class MQParser
 			contentFlags |= connect.isClean() ? 0x02 : 0;
 			contentFlags |= connect.isWillFlag() ? 0x04 : 0;
 			contentFlags |= connect.isWillFlag() ? connect.getWill().getTopic().getQos().getValue() << 3 : 0;
-			contentFlags |= connect.isWillFlag() ? connect.getWill().setRetain() ? 0x20 : 0 : 0;
+			contentFlags |= connect.isWillFlag() ? connect.getWill().getRetain() ? 0x20 : 0 : 0;
 			contentFlags |= connect.isUsernameFlag() ? 0x40 : 0;
 			contentFlags |= connect.isPasswordFlag() ? 0x80 : 0;
 			buf.writeByte(contentFlags);
