@@ -1,12 +1,31 @@
 package com.mobius.software.mqtt.parser.header.impl;
 
+/**
+ * Mobius Software LTD
+ * Copyright 2015-2016, Mobius Software LTD
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 import com.mobius.software.mqtt.parser.Topic;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
-public class Publish implements CountableMessage
+public class Publish extends CountableMessage
 {
-	private Integer packetID;
 	private Topic topic;
 	private byte[] content;
 	private boolean retain;
@@ -19,7 +38,7 @@ public class Publish implements CountableMessage
 
 	public Publish(Integer packetID, Topic topic, byte[] content, boolean retain, boolean dup)
 	{
-		this.packetID = packetID;
+		super(packetID);
 		this.topic = topic;
 		this.content = content;
 		this.retain = retain;
@@ -35,27 +54,17 @@ public class Publish implements CountableMessage
 	@Override
 	public void processBy(MQDevice device)
 	{
-		device.processPublish(packetID, topic, content, retain, dup);
+		device.processPublish(getPacketID(), topic, content, retain, dup);
 	}
 
 	@Override
 	public int getLength()
 	{
 		int length = 0;
-		length += packetID != null ? 2 : 0;
+		length += getPacketID() != null ? 2 : 0;
 		length += topic.length() + 2;
 		length += content.length;
 		return length;
-	}
-
-	public Integer getPacketID()
-	{
-		return packetID;
-	}
-
-	public void setPacketID(Integer packetID)
-	{
-		this.packetID = packetID;
 	}
 
 	public Topic getTopic()

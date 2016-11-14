@@ -1,5 +1,25 @@
 package com.mobius.software.mqtt.parser;
 
+/**
+* Mobius Software LTD
+* Copyright 2015-2016, Mobius Software LTD
+*
+* This is free software; you can redistribute it and/or modify it
+* under the terms of the GNU Lesser General Public License as
+* published by the Free Software Foundation; either version 2.1 of
+* the License, or (at your option) any later version.
+*
+* This software is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this software; if not, write to the Free
+* Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+* 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -12,6 +32,10 @@ import com.mobius.software.mqtt.parser.header.impl.*;
 
 public class MQParser
 {
+	public static final Disconnect DISCONNECT_MESSAGE = new Disconnect();
+	public static final Pingreq PINGREQ_MESSAGE = new Pingreq();
+	public static final Pingresp PINGRESP_MESSAGE = new Pingresp();
+
 	public static ByteBuf next(ByteBuf buf) throws MalformedMessageException
 	{
 		buf.markReaderIndex();
@@ -25,7 +49,7 @@ public class MQParser
 			buf.resetReaderIndex();
 			return Unpooled.buffer(2);
 		default:
-			LengthDetails length = decodeLength(buf);
+			LengthDetails length = LengthDetails.decode(buf);
 			buf.resetReaderIndex();
 			if (length.getLength() == 0)
 				return null;
@@ -40,7 +64,7 @@ public class MQParser
 
 		byte fixedHeader = buf.readByte();
 
-		LengthDetails length = decodeLength(buf);
+		LengthDetails length = LengthDetails.decode(buf);
 
 		MessageType type = MessageType.valueOf((fixedHeader >> 4) & 0xf);
 		switch (type)
@@ -286,13 +310,13 @@ public class MQParser
 			break;
 
 		case PINGREQ:
-			header = new Pingreq();
+			header = PINGREQ_MESSAGE;
 			break;
 		case PINGRESP:
-			header = new Pingresp();
+			header = PINGRESP_MESSAGE;
 			break;
 		case DISCONNECT:
-			header = new Disconnect();
+			header = DISCONNECT_MESSAGE;
 			break;
 
 		default:
@@ -502,28 +526,4 @@ public class MQParser
 
 		return buf;
 	}
-
-	private static LengthDetails decodeLength(ByteBuf buf) throws MalformedMessageException
-	{
-		int length = 0, multiplier = 1;
-		int bytesUsed = 0;
-		byte enc = 0;
-		do
-		{
-			if (multiplier > 128 * 128 * 128)
-				throw new MalformedMessageException("Encoded length exceeds maximum of 268435455 bytes");
-
-			if (!buf.isReadable())
-				return new LengthDetails(0, 0);
-
-			enc = buf.readByte();
-			length += (enc & 0x7f) * multiplier;
-			multiplier *= 128;
-			bytesUsed++;
-		}
-		while ((enc & 0x80) != 0);
-
-		return new LengthDetails(length, bytesUsed);
-	}
-
 }
