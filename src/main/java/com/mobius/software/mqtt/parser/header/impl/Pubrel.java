@@ -25,9 +25,21 @@ import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
 public class Pubrel extends CountableMessage
 {
+	public Pubrel()
+	{
+		super();
+	}
+
 	public Pubrel(Integer packetID)
 	{
 		super(packetID);
+	}
+
+	@Override
+	public Pubrel reInit(Integer packetID)
+	{
+		super.reInit(packetID);
+		return this;
 	}
 
 	@Override

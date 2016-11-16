@@ -31,9 +31,24 @@ public class Publish extends CountableMessage
 	private boolean retain;
 	private boolean dup;
 
+	public Publish()
+	{
+		super();
+	}
+
 	public Publish(Topic topic, byte[] content, boolean retain, boolean dup)
 	{
 		this(null, topic, content, retain, dup);
+	}
+
+	public Publish reInit(Integer packetID, Topic topic, byte[] content, boolean retain, boolean dup)
+	{
+		super.reInit(packetID);
+		this.topic = topic;
+		this.content = content;
+		this.retain = retain;
+		this.dup = dup;
+		return this;
 	}
 
 	public Publish(Integer packetID, Topic topic, byte[] content, boolean retain, boolean dup)

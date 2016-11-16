@@ -41,30 +41,10 @@ public enum QoS
 		}
 	}
 
-	//	@JsonValue
 	public int getValue()
 	{
 		return value;
 	}
-
-	/*@JsonCreator
-	public static QoS forValue(String value)
-	{
-		Integer intValue = null;
-		try
-		{
-			intValue = Integer.parseInt(value);
-		}
-		catch (Exception ex)
-		{
-
-		}
-
-		if (intValue != null)
-			return intToTypeMap.get(intValue);
-		else
-			return strToTypeMap.get(value);
-	}*/
 
 	private QoS(final byte leg)
 	{
@@ -76,12 +56,14 @@ public enum QoS
 		return intToTypeMap.get(type);
 	}
 
-	public int compare(QoS qos)
+	public static QoS calculate(final QoS subscriberQos, final QoS publisherQos)
 	{
-		if (value == qos.getValue())
-			return 0;
-		if (value > qos.getValue())
-			return 1;
-		return -1;
+		if (subscriberQos.getValue() == publisherQos.getValue())
+			return subscriberQos;
+
+		if (subscriberQos.getValue() > publisherQos.getValue())
+			return publisherQos;
+		else
+			return subscriberQos;
 	}
 }

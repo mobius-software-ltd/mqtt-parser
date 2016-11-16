@@ -28,6 +28,11 @@ public class Subscribe extends CountableMessage
 {
 	private Topic[] topics;
 
+	public Subscribe()
+	{
+		super();
+	}
+
 	public Subscribe(Topic[] topics)
 	{
 		this(null, topics);
@@ -37,6 +42,13 @@ public class Subscribe extends CountableMessage
 	{
 		super(packetID);
 		this.topics = topics;
+	}
+
+	public Subscribe reInit(Integer packetID, Topic[] topics)
+	{
+		super.reInit(packetID);
+		this.topics = topics;
+		return this;
 	}
 
 	@Override

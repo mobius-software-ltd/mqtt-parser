@@ -25,9 +25,21 @@ import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
 public class Unsuback extends CountableMessage
 {
+	public Unsuback()
+	{
+		super();
+	}
+
 	public Unsuback(Integer packetID)
 	{
 		super(packetID);
+	}
+
+	@Override
+	public Unsuback reInit(Integer packetID)
+	{
+		super.reInit(packetID);
+		return this;
 	}
 
 	@Override

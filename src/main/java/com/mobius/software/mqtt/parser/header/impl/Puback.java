@@ -25,9 +25,20 @@ import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
 public class Puback extends CountableMessage
 {
+	public Puback()
+	{
+
+	}
+
 	public Puback(Integer packetID)
 	{
 		super(packetID);
+	}
+
+	public Puback reInit(Integer packetID)
+	{
+		super.reInit(packetID);
+		return this;
 	}
 
 	@Override

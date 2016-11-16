@@ -24,9 +24,20 @@ public abstract class CountableMessage implements MQMessage
 {
 	private Integer packetID;
 
+	public CountableMessage()
+	{
+
+	}
+
 	public CountableMessage(Integer packetID)
 	{
 		this.packetID = packetID;
+	}
+
+	public CountableMessage reInit(Integer packetID)
+	{
+		this.packetID = packetID;
+		return this;
 	}
 
 	public Integer getPacketID()

@@ -38,10 +38,11 @@ public class Connack implements MQMessage
 		this.returnCode = returnCode;
 	}
 
-	public void reInit(boolean sessionPresent, ConnackCode returnCode)
+	public Connack reInit(boolean sessionPresent, ConnackCode returnCode)
 	{
 		this.sessionPresent = sessionPresent;
 		this.returnCode = returnCode;
+		return this;
 	}
 
 	@Override

@@ -39,6 +39,11 @@ public class Connect implements MQMessage
 
 	private Will will;
 
+	public Connect()
+	{
+
+	}
+
 	public Connect(String username, String password, String clientID, boolean isClean, int keepalive, Will will)
 	{
 		this.username = username;
@@ -47,6 +52,17 @@ public class Connect implements MQMessage
 		this.cleanSession = isClean;
 		this.keepalive = keepalive;
 		this.will = will;
+	}
+
+	public Connect reInit(String username, String password, String clientID, boolean isClean, int keepalive, Will will)
+	{
+		this.username = username;
+		this.password = password;
+		this.clientID = clientID;
+		this.cleanSession = isClean;
+		this.keepalive = keepalive;
+		this.will = will;
+		return this;
 	}
 
 	@Override

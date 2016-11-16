@@ -28,6 +28,11 @@ public class Unsubscribe extends CountableMessage
 {
 	private Text[] topics;
 
+	public Unsubscribe()
+	{
+		super();
+	}
+
 	public Unsubscribe(Text[] topics)
 	{
 		this(null, topics);
@@ -37,6 +42,13 @@ public class Unsubscribe extends CountableMessage
 	{
 		super(packetID);
 		this.topics = topics;
+	}
+
+	public Unsubscribe reInit(Integer packetID, Text[] topics)
+	{
+		super.reInit(packetID);
+		this.topics = topics;
+		return this;
 	}
 
 	@Override
