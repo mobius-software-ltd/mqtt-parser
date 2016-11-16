@@ -27,8 +27,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mobius.software.mqtt.parser.avps.*;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 import com.mobius.software.mqtt.parser.header.impl.*;
+import com.mobius.software.mqtt.parser.util.StringVerifier;
 
 public class MQParser
 {

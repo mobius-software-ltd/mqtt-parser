@@ -1,6 +1,8 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.avps;
 
 import io.netty.buffer.ByteBuf;
+
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
 /**
  * Mobius Software LTD

@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.mobius.software.mqtt.parser.MQParser;
-import com.mobius.software.mqtt.parser.MalformedMessageException;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
 public class TestParser
 {

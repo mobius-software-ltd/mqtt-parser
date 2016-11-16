@@ -33,10 +33,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mobius.software.mqtt.parser.MQParser;
-import com.mobius.software.mqtt.parser.MalformedMessageException;
-import com.mobius.software.mqtt.parser.QoS;
-import com.mobius.software.mqtt.parser.Text;
-import com.mobius.software.mqtt.parser.Topic;
+import com.mobius.software.mqtt.parser.avps.QoS;
+import com.mobius.software.mqtt.parser.avps.Text;
+import com.mobius.software.mqtt.parser.avps.Topic;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 import com.mobius.software.mqtt.parser.header.impl.Publish;
 

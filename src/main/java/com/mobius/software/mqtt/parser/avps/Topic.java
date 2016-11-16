@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.avps;
 
 /**
  * Mobius Software LTD

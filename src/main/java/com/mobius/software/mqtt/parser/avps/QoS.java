@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.avps;
 
 /**
  * Mobius Software LTD
@@ -22,6 +22,8 @@ package com.mobius.software.mqtt.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
 public enum QoS
 {

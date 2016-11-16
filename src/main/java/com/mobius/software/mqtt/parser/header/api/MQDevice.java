@@ -22,11 +22,11 @@ package com.mobius.software.mqtt.parser.header.api;
 
 import java.util.List;
 
-import com.mobius.software.mqtt.parser.Text;
-import com.mobius.software.mqtt.parser.Topic;
-import com.mobius.software.mqtt.parser.Will;
-import com.mobius.software.mqtt.parser.header.impl.ConnackCode;
-import com.mobius.software.mqtt.parser.header.impl.SubackCode;
+import com.mobius.software.mqtt.parser.avps.ConnackCode;
+import com.mobius.software.mqtt.parser.avps.SubackCode;
+import com.mobius.software.mqtt.parser.avps.Text;
+import com.mobius.software.mqtt.parser.avps.Topic;
+import com.mobius.software.mqtt.parser.avps.Will;
 
 public interface MQDevice
 {

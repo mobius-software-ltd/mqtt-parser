@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.avps;
 
 /**
  * Mobius Software LTD
@@ -20,13 +20,38 @@ package com.mobius.software.mqtt.parser;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-public class MalformedMessageException extends RuntimeException
-{
-	private static final long serialVersionUID = 1L;
+import java.util.HashMap;
+import java.util.Map;
 
-	public MalformedMessageException(String message)
+public enum SubackCode
+{
+	ACCEPTED_QOS0(0), ACCEPTED_QOS1(1), ACCEPTED_QOS2(2), FAILURE(128);
+
+	private int num;
+
+	private static Map<Integer, SubackCode> map = new HashMap<Integer, SubackCode>();
+
+	static
 	{
-		super(message);
+		for (SubackCode legEnum : SubackCode.values())
+		{
+			map.put(legEnum.num, legEnum);
+		}
+	}
+
+	public byte getNum()
+	{
+		return (byte) num;
+	}
+
+	private SubackCode(final int leg)
+	{
+		num = leg;
+	}
+
+	public static SubackCode valueOf(int type)
+	{
+		return map.get(type);
 	}
 
 }

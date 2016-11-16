@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.avps;
 
 /**
  * Mobius Software LTD
@@ -20,61 +20,38 @@ package com.mobius.software.mqtt.parser;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-public class Will
+import java.util.HashMap;
+import java.util.Map;
+
+public enum ConnackCode
 {
-	private Topic topic;
-	private byte[] content;
-	private Boolean retain;
+	ACCEPTED(0), UNACCEPTABLE_PROTOCOL_VERSION(1), IDENTIFIER_REJECTED(2), SERVER_UNUVALIABLE(3), BAD_USER_OR_PASS(4), NOT_AUTHORIZED(5);
 
-	public Will()
+	private int num;
+
+	private static Map<Integer, ConnackCode> map = new HashMap<Integer, ConnackCode>();
+
+	static
 	{
-
+		for (ConnackCode legEnum : ConnackCode.values())
+		{
+			map.put(legEnum.num, legEnum);
+		}
 	}
 
-	public Will(Topic topic, byte[] content, Boolean retain)
+	public byte getNum()
 	{
-		this.topic = topic;
-		this.content = content;
-		this.retain = retain;
+		return (byte) num;
 	}
 
-	public int retrieveLentth()
+	private ConnackCode(final int leg)
 	{
-		return topic.length() + content.length + 4;
+		num = leg;
 	}
 
-	public Topic getTopic()
+	public static ConnackCode valueOf(int type)
 	{
-		return topic;
+		return map.get(type);
 	}
 
-	public void setTopic(Topic topic)
-	{
-		this.topic = topic;
-	}
-
-	public byte[] getContent()
-	{
-		return content;
-	}
-
-	public void setContent(byte[] content)
-	{
-		this.content = content;
-	}
-
-	public Boolean getRetain()
-	{
-		return retain;
-	}
-
-	public void setRetain(Boolean retain)
-	{
-		this.retain = retain;
-	}
-
-	public boolean isValid()
-	{
-		return this.topic != null && this.topic.length() > 0 && this.content != null && this.topic.getQos() != null;
-	}
 }

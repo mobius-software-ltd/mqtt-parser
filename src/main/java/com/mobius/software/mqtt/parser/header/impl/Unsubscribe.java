@@ -20,7 +20,8 @@ package com.mobius.software.mqtt.parser.header.impl;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import com.mobius.software.mqtt.parser.Text;
+import com.mobius.software.mqtt.parser.avps.MessageType;
+import com.mobius.software.mqtt.parser.avps.Text;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 

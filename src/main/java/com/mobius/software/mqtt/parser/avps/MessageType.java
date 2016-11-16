@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser.header.impl;
+package com.mobius.software.mqtt.parser.avps;
 
 /**
  * Mobius Software LTD
@@ -23,7 +23,7 @@ package com.mobius.software.mqtt.parser.header.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mobius.software.mqtt.parser.MalformedMessageException;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
 public enum MessageType
 {

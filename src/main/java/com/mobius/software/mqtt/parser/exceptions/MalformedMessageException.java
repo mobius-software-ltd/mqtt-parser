@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser;
+package com.mobius.software.mqtt.parser.exceptions;
 
 /**
  * Mobius Software LTD
@@ -20,25 +20,13 @@ package com.mobius.software.mqtt.parser;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-public class StringVerifier
+public class MalformedMessageException extends RuntimeException
 {
-	private static final String NULL_CHARACTER = "\u0000";
+	private static final long serialVersionUID = 1L;
 
-	public static boolean verify(String topic)
+	public MalformedMessageException(String message)
 	{
-		if (topic.length() > 0)
-		{
-			if (topic.contains(NULL_CHARACTER))
-				return false;
-
-			for (int i = 0; i < topic.length(); i++)
-			{
-				char c = topic.charAt(i);
-				if (Character.isSurrogate(c))
-					return false;
-			}
-		}
-
-		return true;
+		super(message);
 	}
+
 }

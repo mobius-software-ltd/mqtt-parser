@@ -20,15 +20,16 @@ package com.mobius.software.mqtt.parser.header.impl;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.mobius.software.mqtt.parser.avps.MessageType;
+import com.mobius.software.mqtt.parser.avps.SubackCode;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
 public class Suback extends CountableMessage
 {
-	private List<SubackCode> returnCodes = new ArrayList<>();
+	private List<SubackCode> returnCodes;
 
 	public Suback()
 	{

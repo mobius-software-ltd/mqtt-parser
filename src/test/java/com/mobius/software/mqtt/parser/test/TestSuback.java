@@ -32,9 +32,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mobius.software.mqtt.parser.MQParser;
-import com.mobius.software.mqtt.parser.MalformedMessageException;
+import com.mobius.software.mqtt.parser.avps.SubackCode;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 import com.mobius.software.mqtt.parser.header.impl.Suback;
-import com.mobius.software.mqtt.parser.header.impl.SubackCode;
 
 public class TestSuback
 {

@@ -1,4 +1,4 @@
-package com.mobius.software.mqtt.parser.header.impl;
+package com.mobius.software.mqtt.parser.util;
 
 /**
  * Mobius Software LTD
@@ -20,38 +20,25 @@ package com.mobius.software.mqtt.parser.header.impl;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-public enum SubackCode
+public class StringVerifier
 {
-	ACCEPTED_QOS0(0), ACCEPTED_QOS1(1), ACCEPTED_QOS2(2), FAILURE(128);
+	private static final String NULL_CHARACTER = "\u0000";
 
-	private int num;
-
-	private static Map<Integer, SubackCode> map = new HashMap<Integer, SubackCode>();
-
-	static
+	public static boolean verify(String topic)
 	{
-		for (SubackCode legEnum : SubackCode.values())
+		if (topic.length() > 0)
 		{
-			map.put(legEnum.num, legEnum);
+			if (topic.contains(NULL_CHARACTER))
+				return false;
+
+			for (int i = 0; i < topic.length(); i++)
+			{
+				char c = topic.charAt(i);
+				if (Character.isSurrogate(c))
+					return false;
+			}
 		}
-	}
 
-	public byte getNum()
-	{
-		return (byte) num;
+		return true;
 	}
-
-	private SubackCode(final int leg)
-	{
-		num = leg;
-	}
-
-	public static SubackCode valueOf(int type)
-	{
-		return map.get(type);
-	}
-
 }
