@@ -20,6 +20,7 @@ package com.mobius.software.mqtt.parser.test;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import io.netty.buffer.ByteBuf;
@@ -189,4 +190,62 @@ public class TestParser
 		}
 	}
 
+	@Test
+	public void testEncodedLenthOneByte()
+	{
+		int length = 1;
+		ByteBuf buf = MQParser.getBuffer(length);
+
+		assertEquals(2, buf.readableBytes());
+		assertEquals(0, buf.readByte());
+		assertEquals(1, buf.readByte());
+	}
+
+	@Test
+	public void testEncodedLenthTwoBytes()
+	{
+		int length = 128;
+		byte[] expected = new byte[]
+		{ (byte) 0x80, 0x01 };
+
+		ByteBuf buf = MQParser.getBuffer(length);
+		assertEquals(3, buf.readableBytes());
+		assertEquals(0, buf.readByte());
+
+		byte[] actual = new byte[buf.readableBytes()];
+		buf.readBytes(actual);
+		assertArrayEquals(expected, actual);
+	}
+
+	@Test
+	public void testEncodedLenthThreeBytes()
+	{
+		int length = 16384;
+		byte[] expected = new byte[]
+		{ (byte) 0x80, (byte) 0x80, 0x01 };
+
+		ByteBuf buf = MQParser.getBuffer(length);
+		assertEquals(4, buf.readableBytes());
+		assertEquals(0, buf.readByte());
+
+		byte[] actual = new byte[buf.readableBytes()];
+		buf.readBytes(actual);
+		assertArrayEquals(expected, actual);
+	}
+
+	@Test
+	public void testEncodedLenthFourBytes()
+	{
+		int length = 2097152;
+		byte[] expected = new byte[]
+		{ (byte) 0x80, (byte) 0x80, (byte) 0x80, 0x01 };
+
+		ByteBuf buf = MQParser.getBuffer(length);
+		assertEquals(5, buf.readableBytes());
+		assertEquals(0, buf.readByte());
+
+		byte[] actual = new byte[buf.readableBytes()];
+		buf.readBytes(actual);
+		assertArrayEquals(expected, actual);
+	}
 }

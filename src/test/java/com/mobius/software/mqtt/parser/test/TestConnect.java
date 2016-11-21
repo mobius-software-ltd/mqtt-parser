@@ -23,6 +23,7 @@ package com.mobius.software.mqtt.parser.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -132,5 +133,159 @@ public class TestConnect
 	public void testUserPassFlag()
 	{
 		assertTrue("userPassFlag doesn't toggle", expected.isPasswordFlag());
+	}
+
+	@Test
+	public void testEncodeCleanSession()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertTrue(actual.isClean());
+
+			connect.setCleanSession(false);
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertFalse(actual.isClean());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testEncodeWillFlag()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertTrue(actual.isWillFlag());
+
+			connect.setWill(null);
+
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertFalse(actual.isWillFlag());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testEncodeWillRetain()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertTrue(actual.getWill().getRetain());
+
+			connect.getWill().setRetain(false);
+
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertFalse(actual.getWill().getRetain());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testEncodeWillQos()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertEquals(qos, actual.getWill().getTopic().getQos());
+
+			connect.getWill().getTopic().setQos(QoS.AT_LEAST_ONCE);
+
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertEquals(QoS.AT_LEAST_ONCE, actual.getWill().getTopic().getQos());
+
+			connect.getWill().getTopic().setQos(QoS.EXACTLY_ONCE);
+
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertEquals(QoS.EXACTLY_ONCE, actual.getWill().getTopic().getQos());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
+
+	@Test
+	public void testEncodeUsernameFlag()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertTrue(actual.isUsernameFlag());
+
+			connect.setUsername(null);
+
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertFalse(actual.isUsernameFlag());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testEncodePasswordFlag()
+	{
+		try
+		{
+			QoS qos = QoS.AT_MOST_ONCE;
+			Text name = new Text("root");
+			Topic topic = new Topic(name, qos);
+			Will will = new Will(topic, "content".getBytes(), true);
+			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
+			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertTrue(actual.isPasswordFlag());
+
+			connect.setPassword(null);
+			actual = (Connect) MQParser.decode(MQParser.encode(connect));
+			assertFalse(actual.isPasswordFlag());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			fail();
+		}
 	}
 }
