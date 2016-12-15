@@ -24,7 +24,7 @@ import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 
-public class Disconnect implements MQMessage
+public class Disconnect extends MQMessage
 {
 	@Override
 	public int getLength()

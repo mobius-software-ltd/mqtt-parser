@@ -22,11 +22,16 @@ package com.mobius.software.mqtt.parser.header.api;
 
 import com.mobius.software.mqtt.parser.avps.MessageType;
 
-public interface MQMessage
+public abstract class MQMessage implements ProtocolMessage
 {
-	int getLength();
+	public abstract int getLength();
 
-	MessageType getType();
+	public abstract MessageType getType();
 
-	void processBy(MQDevice device);
+	public abstract void processBy(MQDevice device);
+
+	public Protocol getProtocol()
+	{
+		return Protocol.MQTT;
+	}
 }

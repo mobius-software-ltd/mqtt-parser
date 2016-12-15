@@ -196,12 +196,12 @@ public class TestConnect
 			Will will = new Will(topic, "content".getBytes(), true);
 			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
 			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
-			assertTrue(actual.getWill().getRetain());
+			assertTrue(actual.getWill().isRetain());
 
 			connect.getWill().setRetain(false);
 
 			actual = (Connect) MQParser.decode(MQParser.encode(connect));
-			assertFalse(actual.getWill().getRetain());
+			assertFalse(actual.getWill().isRetain());
 		}
 		catch (Exception e)
 		{

@@ -25,7 +25,7 @@ import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 
-public class Connack implements MQMessage
+public class Connack extends MQMessage
 {
 	private boolean sessionPresent;
 	private ConnackCode returnCode;

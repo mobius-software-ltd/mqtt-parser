@@ -24,21 +24,21 @@ public class Will
 {
 	private Topic topic;
 	private byte[] content;
-	private Boolean retain;
+	private boolean retain;
 
 	public Will()
 	{
 
 	}
 
-	public Will(Topic topic, byte[] content, Boolean retain)
+	public Will(Topic topic, byte[] content, boolean retain)
 	{
 		this.topic = topic;
 		this.content = content;
 		this.retain = retain;
 	}
 
-	public int retrieveLentth()
+	public int retrieveLength()
 	{
 		return topic.length() + content.length + 4;
 	}
@@ -63,12 +63,12 @@ public class Will
 		this.content = content;
 	}
 
-	public Boolean getRetain()
+	public boolean isRetain()
 	{
 		return retain;
 	}
 
-	public void setRetain(Boolean retain)
+	public void setRetain(boolean retain)
 	{
 		this.retain = retain;
 	}

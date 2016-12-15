@@ -24,7 +24,7 @@ import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 
-public class Pingreq implements MQMessage
+public class Pingreq extends MQMessage
 {
 	@Override
 	public int getLength()

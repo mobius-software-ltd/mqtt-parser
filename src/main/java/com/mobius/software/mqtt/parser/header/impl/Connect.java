@@ -25,7 +25,7 @@ import com.mobius.software.mqtt.parser.avps.Will;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 
-public class Connect implements MQMessage
+public class Connect extends MQMessage
 {
 	private static final byte defaultProtocolLevel = 4;
 	private static final String PROTOCOL_NAME = "MQTT";
@@ -83,7 +83,7 @@ public class Connect implements MQMessage
 	{
 		int length = 10;
 		length += clientID.length() + 2;
-		length += isWillFlag() ? will.retrieveLentth() : 0;
+		length += isWillFlag() ? will.retrieveLength() : 0;
 		length += username != null ? username.length() + 2 : 0;
 		length += password != null ? password.length() + 2 : 0;
 		return length;

@@ -44,6 +44,12 @@ public class MQParser
 		buf.markReaderIndex();
 		MessageType type = MessageType.valueOf(((buf.readByte() >> 4) & 0xf));
 
+		if (type == null)
+		{
+			buf.resetReaderIndex();
+			throw new MalformedMessageException("invalid message type decoding");
+		}
+		
 		switch (type)
 		{
 		case PINGREQ:
@@ -57,7 +63,10 @@ public class MQParser
 			if (length.getLength() == 0)
 				return null;
 			int result = length.getLength() + length.getSize() + 1;
-			return result <= buf.readableBytes() ? Unpooled.buffer(result) : null;
+			if (result > buf.readableBytes())
+				throw new MalformedMessageException("invalid length decoding for " + type + " result length:" + result + ", in buffer:" + buf.readableBytes());
+
+			return Unpooled.buffer(result);
 		}
 	}
 
@@ -368,7 +377,7 @@ public class MQParser
 				{
 					contentFlags += 4;
 					contentFlags += connect.getWill().getTopic().getQos().getValue() << 3;
-					if (connect.getWill().getRetain())
+					if (connect.getWill().isRetain())
 						contentFlags += 0x20;
 				}
 				if (connect.isPasswordFlag())

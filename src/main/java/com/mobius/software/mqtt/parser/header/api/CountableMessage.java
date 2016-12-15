@@ -20,7 +20,7 @@ package com.mobius.software.mqtt.parser.header.api;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-public abstract class CountableMessage implements MQMessage
+public abstract class CountableMessage extends MQMessage
 {
 	private Integer packetID;
 
