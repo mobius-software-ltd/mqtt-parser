@@ -55,8 +55,8 @@ public class TestParser
 		assertEquals("buffer index was not reset", 0, buf.readerIndex());
 	}
 
-	@Test
-	public void testNegativenext() throws MalformedMessageException
+	@Test(expected = MalformedMessageException.class)
+	public void testNegativeNext() throws MalformedMessageException
 	{
 		ByteBuf buf = Unpooled.buffer(103);
 		buf.writeByte(0x82);
@@ -65,7 +65,27 @@ public class TestParser
 		buf.writeShort(97);
 		buf.writeBytes(new byte[96]);
 		buf.writeByte(1);
-		assertNull("Invalid next header length", MQParser.next(buf));
+		MQParser.next(buf);
+	}
+
+	@Test
+	public void testNegativeNextIndexNotReset() throws MalformedMessageException
+	{
+		ByteBuf buf = Unpooled.buffer(103);
+		buf.writeByte(0x82);
+		buf.writeByte(0x66); //encoded l=104, actual l=103
+		buf.writeShort(10);
+		buf.writeShort(97);
+		buf.writeBytes(new byte[96]);
+		buf.writeByte(1);
+		try
+		{
+			MQParser.next(buf);
+		}
+		catch (MalformedMessageException e)
+		{
+
+		}
 		assertEquals("buffer index was not reset", 0, buf.readerIndex());
 	}
 
@@ -81,7 +101,7 @@ public class TestParser
 		assertEquals("buffer index was not reset", 0, buf.readerIndex());
 	}
 
-	@Test
+	@Test(expected = MalformedMessageException.class)
 	public void testNextContentIncomplete() throws MalformedMessageException
 	{
 		ByteBuf buf = Unpooled.buffer(2120207);
@@ -91,7 +111,28 @@ public class TestParser
 		buf.writeByte(0x81);
 		buf.writeByte(0x01);
 		buf.writeBytes(new byte[2120201]); // one byte missing in content
-		assertNull("Invalid next header length", MQParser.next(buf));
+		MQParser.next(buf);
+		assertEquals("buffer index was not reset", 0, buf.readerIndex());
+	}
+
+	@Test
+	public void testNextContentIncompleteBufferNotReset() throws MalformedMessageException
+	{
+		ByteBuf buf = Unpooled.buffer(2120207);
+		buf.writeByte(0x82);
+		buf.writeByte(0x8a);
+		buf.writeByte(0xB4);
+		buf.writeByte(0x81);
+		buf.writeByte(0x01);
+		buf.writeBytes(new byte[2120201]); // one byte missing in content
+		try
+		{
+			MQParser.next(buf);
+		}
+		catch (MalformedMessageException e)
+		{
+
+		}
 		assertEquals("buffer index was not reset", 0, buf.readerIndex());
 	}
 

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 
 import java.io.UnsupportedEncodingException;
 
@@ -47,8 +48,9 @@ public class TestPublish
 	@Before
 	public void setUp()
 	{
-		byte[] content = new byte[]
+		byte[] data = new byte[]
 		{ 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64 };
+		ByteBuf content = Unpooled.buffer(data.length).writeBytes(data);
 		expected = new Publish(100, new Topic(new Text("new_topic"), QoS.EXACTLY_ONCE), content, true, true);
 	}
 
@@ -62,8 +64,8 @@ public class TestPublish
 	public void testPositiveByteContent() throws UnsupportedEncodingException, MalformedMessageException
 	{
 		ByteBuf buf = MQParser.encode(expected);
-		MQMessage actual = MQParser.decode(buf);
-		assertTrue("Invalid binary content", ByteBufUtil.equals(MQParser.encode(expected), MQParser.encode(actual)));
+		MQMessage actual = MQParser.decode(Unpooled.copiedBuffer(buf));
+		assertTrue("Invalid binary content", ByteBufUtil.equals(buf, MQParser.encode(actual)));
 	}
 
 	@Test
@@ -83,8 +85,8 @@ public class TestPublish
 	@Test
 	public void testSetData()
 	{
-		byte[] data =
-		{ 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64 };
+		ByteBuf data = Unpooled.buffer().writeBytes(new byte[]
+		{ 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64 });
 		Publish actual = new Publish(expected.getPacketID(), expected.getTopic(), data, expected.isRetain(), expected.isDup());
 		assertEquals("setData results with invalid length", actual.getLength(), 24);
 	}
@@ -92,20 +94,20 @@ public class TestPublish
 	@Test
 	public void testEncodeLength()
 	{
-		Publish actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), new byte[121], expected.isRetain(), expected.isDup());
+		Publish actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), Unpooled.buffer(121).writeBytes(new byte[121]), expected.isRetain(), expected.isDup());
 		assertEquals("invalid header length", 129, actual.getLength());
-		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), new byte[122], expected.isRetain(), expected.isDup());
+		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), Unpooled.buffer(122).writeBytes(new byte[122]), expected.isRetain(), expected.isDup());
 		assertEquals("invalid header length", actual.getLength(), 130);
-		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), new byte[16378], expected.isRetain(), expected.isDup());
+		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), Unpooled.buffer(16378).writeBytes(new byte[16378]), expected.isRetain(), expected.isDup());
 		assertEquals("invalid header length", actual.getLength(), 16386);
-		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), new byte[2097146], expected.isRetain(), expected.isDup());
+		actual = new Publish(expected.getPacketID(), new Topic(new Text("name"), expected.getTopic().getQos()), Unpooled.buffer(2097146).writeBytes(new byte[2097146]), expected.isRetain(), expected.isDup());
 		assertEquals("invalid header length", actual.getLength(), 2097154);
 	}
 
 	@Test
 	public void testTime() throws UnsupportedEncodingException, MalformedMessageException
 	{
-		Publish actual = new Publish(20, new Topic(new Text("root/first/second/third/fourth/fifth/andsomeadditionalsymbols"), QoS.EXACTLY_ONCE), "1234567890-=qwertyuiop[]asdfghjkl".getBytes(), false, false);
+		Publish actual = new Publish(20, new Topic(new Text("root/first/second/third/fourth/fifth/andsomeadditionalsymbols"), QoS.EXACTLY_ONCE), Unpooled.buffer().writeBytes("1234567890-=qwertyuiop[]asdfghjkl".getBytes()), false, false);
 		ByteBuf buf = MQParser.encode(actual);
 		buf = MQParser.encode(actual);
 		ByteBuf slice = MQParser.next(buf);

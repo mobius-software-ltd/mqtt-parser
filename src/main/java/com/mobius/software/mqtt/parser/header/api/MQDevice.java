@@ -20,6 +20,8 @@ package com.mobius.software.mqtt.parser.header.api;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.List;
 
 import com.mobius.software.mqtt.parser.avps.ConnackCode;
@@ -42,7 +44,7 @@ public interface MQDevice
 
 	void processUnsuback(Integer packetID);
 
-	void processPublish(Integer packetID, Topic topic, byte[] content, boolean retain, boolean isDup);
+	void processPublish(Integer packetID, Topic topic, ByteBuf content, boolean retain, boolean isDup);
 
 	void processPuback(Integer packetID);
 

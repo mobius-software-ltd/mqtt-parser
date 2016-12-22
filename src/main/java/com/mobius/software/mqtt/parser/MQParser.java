@@ -29,15 +29,23 @@ import java.util.List;
 
 import com.mobius.software.mqtt.parser.avps.*;
 import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
+import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQMessage;
 import com.mobius.software.mqtt.parser.header.impl.*;
 import com.mobius.software.mqtt.parser.util.StringVerifier;
 
 public class MQParser
 {
-	public static final Disconnect DISCONNECT_MESSAGE = new Disconnect();
-	public static final Pingreq PINGREQ_MESSAGE = new Pingreq();
-	public static final Pingresp PINGRESP_MESSAGE = new Pingresp();
+	public static final Disconnect DISCONNECT = new Disconnect();
+	public static final Pingreq PINGREQ = new Pingreq();
+	public static final Pingresp PINGRESP = new Pingresp();
+
+	private MQCache cache;
+
+	public MQParser(MQCache cache)
+	{
+		this.cache = cache;
+	}
 
 	public static ByteBuf next(ByteBuf buf) throws MalformedMessageException
 	{
@@ -49,7 +57,7 @@ public class MQParser
 			buf.resetReaderIndex();
 			throw new MalformedMessageException("invalid message type decoding");
 		}
-		
+
 		switch (type)
 		{
 		case PINGREQ:
@@ -67,6 +75,274 @@ public class MQParser
 				throw new MalformedMessageException("invalid length decoding for " + type + " result length:" + result + ", in buffer:" + buf.readableBytes());
 
 			return Unpooled.buffer(result);
+		}
+	}
+
+	public MQMessage decodeUsingCache(ByteBuf buf) throws MalformedMessageException
+	{
+		byte fixedHeader = buf.readByte();
+
+		LengthDetails length = LengthDetails.decode(buf);
+
+		MessageType type = MessageType.valueOf((fixedHeader >> 4) & 0xf);
+		MQMessage header = cache.borrowMessage(type);
+		try
+		{
+			switch (type)
+			{
+			case CONNECT:
+
+				byte[] nameValue = new byte[buf.readUnsignedShort()];
+				buf.readBytes(nameValue, 0, nameValue.length);
+				String name = new String(nameValue, "UTF-8");
+				if (!name.equals("MQTT"))
+					throw new MalformedMessageException("CONNECT, protocol-name set to " + name);
+
+				int protocolLevel = buf.readUnsignedByte();
+
+				byte contentFlags = buf.readByte();
+
+				boolean userNameFlag = ((contentFlags >> 7) & 1) == 1 ? true : false;
+				boolean userPassFlag = ((contentFlags >> 6) & 1) == 1 ? true : false;
+				boolean willRetain = ((contentFlags >> 5) & 1) == 1 ? true : false;
+				QoS willQos = QoS.valueOf(((contentFlags & 0x1f) >> 3) & 3);
+				if (willQos == null)
+					throw new MalformedMessageException("CONNECT, will QoS set to " + willQos);
+				boolean willFlag = (((contentFlags >> 2) & 1) == 1) ? true : false;
+
+				if (willQos.getValue() > 0 && !willFlag)
+					throw new MalformedMessageException("CONNECT, will QoS set to " + willQos + ", willFlag not set");
+
+				if (willRetain && !willFlag)
+					throw new MalformedMessageException("CONNECT, will retain set, willFlag not set");
+
+				boolean cleanSession = ((contentFlags >> 1) & 1) == 1 ? true : false;
+
+				boolean reservedFlag = (contentFlags & 1) == 1 ? true : false;
+				if (reservedFlag)
+					throw new MalformedMessageException("CONNECT, reserved flag set to true");
+
+				int keepalive = buf.readUnsignedShort();
+
+				byte[] clientIdValue = new byte[buf.readUnsignedShort()];
+				buf.readBytes(clientIdValue, 0, clientIdValue.length);
+				String clientID = new String(clientIdValue, "UTF-8");
+				if (!StringVerifier.verify(clientID))
+					throw new MalformedMessageException("ClientID contains restricted characters: U+0000, U+D000-U+DFFF");
+
+				Text willTopic = null;
+				byte[] willMessage = null;
+				String username = null;
+				String password = null;
+
+				Will will = null;
+				if (willFlag)
+				{
+					if (buf.readableBytes() < 2)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					byte[] willTopicValue = new byte[buf.readUnsignedShort()];
+					if (buf.readableBytes() < willTopicValue.length)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					buf.readBytes(willTopicValue, 0, willTopicValue.length);
+
+					String willTopicName = new String(willTopicValue, "UTF-8");
+					if (!StringVerifier.verify(willTopicName))
+						throw new MalformedMessageException("WillTopic contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+					willTopic = new Text(willTopicName);
+
+					if (buf.readableBytes() < 2)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					willMessage = new byte[buf.readUnsignedShort()];
+					if (buf.readableBytes() < willMessage.length)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					buf.readBytes(willMessage, 0, willMessage.length);
+					if (willTopic.length() == 0)
+						throw new MalformedMessageException("invalid will encoding");
+					will = new Will(new Topic(willTopic, willQos), willMessage, willRetain);
+					if (!will.isValid())
+						throw new MalformedMessageException("invalid will encoding");
+				}
+
+				if (userNameFlag)
+				{
+					if (buf.readableBytes() < 2)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					byte[] userNameValue = new byte[buf.readUnsignedShort()];
+					if (buf.readableBytes() < userNameValue.length)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					buf.readBytes(userNameValue, 0, userNameValue.length);
+					username = new String(userNameValue, "UTF-8");
+					if (!StringVerifier.verify(username))
+						throw new MalformedMessageException("Username contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+				}
+
+				if (userPassFlag)
+				{
+					if (buf.readableBytes() < 2)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					byte[] userPassValue = new byte[buf.readUnsignedShort()];
+					if (buf.readableBytes() < userPassValue.length)
+						throw new MalformedMessageException("Invalid encoding will/username/password");
+
+					buf.readBytes(userPassValue, 0, userPassValue.length);
+					password = new String(userPassValue, "UTF-8");
+					if (!StringVerifier.verify(password))
+						throw new MalformedMessageException("Password contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+				}
+
+				if (buf.readableBytes() > 0)
+					throw new MalformedMessageException("Invalid encoding will/username/password");
+
+				Connect connect = (Connect) header;
+				connect.reInit(username, password, clientID, cleanSession, keepalive, will);
+				if (protocolLevel != 4)
+					connect.setProtocolLevel(protocolLevel);
+				break;
+
+			case CONNACK:
+				byte sessionPresentValue = buf.readByte();
+				if (sessionPresentValue != 0 && sessionPresentValue != 1)
+					throw new MalformedMessageException(String.format("CONNACK, session-present set to %d", sessionPresentValue & 0xff));
+				boolean isPresent = sessionPresentValue == 1 ? true : false;
+
+				short connackByte = buf.readUnsignedByte();
+				ConnackCode connackCode = ConnackCode.valueOf(connackByte);
+				if (connackCode == null)
+					throw new MalformedMessageException("Invalid connack code: " + connackByte);
+				Connack connack = (Connack) header;
+				connack.reInit(isPresent, connackCode);
+				break;
+
+			case PUBLISH:
+
+				fixedHeader &= 0xf;
+
+				boolean dup = ((fixedHeader >> 3) & 1) == 1 ? true : false;
+
+				QoS qos = QoS.valueOf((fixedHeader & 0x07) >> 1);
+				if (qos == null)
+					throw new MalformedMessageException("invalid QoS value");
+				if (dup && qos == QoS.AT_MOST_ONCE)
+					throw new MalformedMessageException("PUBLISH, QoS-0 dup flag present");
+
+				boolean retain = ((fixedHeader & 1) == 1) ? true : false;
+
+				byte[] topicNameValue = new byte[buf.readUnsignedShort()];
+				buf.readBytes(topicNameValue, 0, topicNameValue.length);
+				String topicName = new String(topicNameValue, "UTF-8");
+				if (!StringVerifier.verify(topicName))
+					throw new MalformedMessageException("Publish-topic contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+
+				Integer packetID = null;
+				if (qos != QoS.AT_MOST_ONCE)
+				{
+					packetID = buf.readUnsignedShort();
+					if (packetID < 0 || packetID > 65535)
+						throw new MalformedMessageException("Invalid PUBLISH packetID encoding");
+				}
+
+				ByteBuf data = Unpooled.buffer(buf.readableBytes());
+				data.writeBytes(buf);
+
+				Publish publish = (Publish) header;
+				publish.reInit(packetID, new Topic(new Text(topicName), qos), data, retain, dup);
+				break;
+
+			case PUBACK:
+			case PUBREC:
+			case PUBREL:
+			case PUBCOMP:
+			case UNSUBACK:
+				CountableMessage countable = (CountableMessage) header;
+				countable.reInit(buf.readUnsignedShort());
+				break;
+
+			case SUBSCRIBE:
+				Integer subID = buf.readUnsignedShort();
+				List<Topic> subscriptions = new ArrayList<>();
+				while (buf.isReadable())
+				{
+					byte[] value = new byte[buf.readUnsignedShort()];
+					buf.readBytes(value, 0, value.length);
+					QoS requestedQos = QoS.valueOf(buf.readByte());
+					if (requestedQos == null)
+						throw new MalformedMessageException("Subscribe qos must be in range from 0 to 2: " + requestedQos);
+					String topic = new String(value, "UTF-8");
+					if (!StringVerifier.verify(topic))
+						throw new MalformedMessageException("Subscribe topic contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+					Topic subscription = new Topic(new Text(topic), requestedQos);
+					subscriptions.add(subscription);
+				}
+				if (subscriptions.isEmpty())
+					throw new MalformedMessageException("Subscribe with 0 topics");
+
+				Subscribe subscribe = (Subscribe) header;
+				subscribe.reInit(subID, subscriptions.toArray(new Topic[subscriptions.size()]));
+				break;
+
+			case SUBACK:
+				Integer subackID = buf.readUnsignedShort();
+				List<SubackCode> subackCodes = new ArrayList<>();
+				while (buf.isReadable())
+				{
+					short subackByte = buf.readUnsignedByte();
+					SubackCode subackCode = SubackCode.valueOf(subackByte);
+					if (subackCode == null)
+						throw new MalformedMessageException("Invalid suback code: " + subackByte);
+					subackCodes.add(subackCode);
+				}
+				if (subackCodes.isEmpty())
+					throw new MalformedMessageException("Suback with 0 return-codes");
+
+				Suback suback = (Suback) header;
+				suback.reInit(subackID, subackCodes);
+				break;
+
+			case UNSUBSCRIBE:
+				Integer unsubID = buf.readUnsignedShort();
+				List<Text> unsubscribeTopics = new ArrayList<>();
+				while (buf.isReadable())
+				{
+					byte[] value = new byte[buf.readUnsignedShort()];
+					buf.readBytes(value, 0, value.length);
+					String topic = new String(value, "UTF-8");
+					if (!StringVerifier.verify(topic))
+						throw new MalformedMessageException("Unsubscribe topic contains one or more restricted characters: U+0000, U+D000-U+DFFF");
+					unsubscribeTopics.add(new Text(topic));
+				}
+				if (unsubscribeTopics.isEmpty())
+					throw new MalformedMessageException("Unsubscribe with 0 topics");
+				Unsubscribe unsubscribe = (Unsubscribe) header;
+				unsubscribe.reInit(unsubID, unsubscribeTopics.toArray(new Text[unsubscribeTopics.size()]));
+				break;
+
+			case PINGREQ:
+			case PINGRESP:
+			case DISCONNECT:
+				break;
+
+			default:
+				throw new MalformedMessageException("Invalid header type: " + type);
+			}
+
+			if (buf.isReadable())
+				throw new MalformedMessageException("unexpected bytes in content");
+
+			if (length.getLength() != header.getLength())
+				throw new MalformedMessageException(String.format("Invalid length. Encoded: %d, actual: %d", length.getLength(), header.getLength()));
+
+			return header;
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new MalformedMessageException("unsupported string encoding:" + e.getMessage());
 		}
 	}
 
@@ -213,7 +489,7 @@ public class MQParser
 				break;
 
 			case PUBLISH:
-				int dataLength = length.getLength();
+
 				fixedHeader &= 0xf;
 
 				boolean dup = ((fixedHeader >> 3) & 1) == 1 ? true : false;
@@ -231,7 +507,6 @@ public class MQParser
 				String topicName = new String(topicNameValue, "UTF-8");
 				if (!StringVerifier.verify(topicName))
 					throw new MalformedMessageException("Publish-topic contains one or more restricted characters: U+0000, U+D000-U+DFFF");
-				dataLength -= topicName.length() + 2;
 
 				Integer packetID = null;
 				if (qos != QoS.AT_MOST_ONCE)
@@ -239,11 +514,10 @@ public class MQParser
 					packetID = buf.readUnsignedShort();
 					if (packetID < 0 || packetID > 65535)
 						throw new MalformedMessageException("Invalid PUBLISH packetID encoding");
-					dataLength -= 2;
 				}
-				byte[] data = new byte[dataLength];
-				if (dataLength > 0)
-					buf.readBytes(data, 0, data.length);
+
+				ByteBuf data = Unpooled.buffer(buf.readableBytes());
+				data.writeBytes(buf);
 				header = new Publish(packetID, new Topic(new Text(topicName), qos), data, retain, dup);
 				break;
 
@@ -324,13 +598,13 @@ public class MQParser
 				break;
 
 			case PINGREQ:
-				header = PINGREQ_MESSAGE;
+				header = PINGREQ;
 				break;
 			case PINGRESP:
-				header = PINGRESP_MESSAGE;
+				header = PINGRESP;
 				break;
 			case DISCONNECT:
-				header = DISCONNECT_MESSAGE;
+				header = DISCONNECT;
 				break;
 
 			default:

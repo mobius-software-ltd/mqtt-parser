@@ -20,6 +20,8 @@ package com.mobius.software.mqtt.parser.header.impl;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import io.netty.buffer.ByteBuf;
+
 import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.avps.Topic;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
@@ -28,7 +30,7 @@ import com.mobius.software.mqtt.parser.header.api.MQDevice;
 public class Publish extends CountableMessage
 {
 	private Topic topic;
-	private byte[] content;
+	private ByteBuf content;
 	private boolean retain;
 	private boolean dup;
 
@@ -37,12 +39,12 @@ public class Publish extends CountableMessage
 		super();
 	}
 
-	public Publish(Topic topic, byte[] content, boolean retain, boolean dup)
+	public Publish(Topic topic, ByteBuf content, boolean retain, boolean dup)
 	{
 		this(null, topic, content, retain, dup);
 	}
 
-	public Publish reInit(Integer packetID, Topic topic, byte[] content, boolean retain, boolean dup)
+	public Publish reInit(Integer packetID, Topic topic, ByteBuf content, boolean retain, boolean dup)
 	{
 		super.reInit(packetID);
 		this.topic = topic;
@@ -52,7 +54,7 @@ public class Publish extends CountableMessage
 		return this;
 	}
 
-	public Publish(Integer packetID, Topic topic, byte[] content, boolean retain, boolean dup)
+	public Publish(Integer packetID, Topic topic, ByteBuf content, boolean retain, boolean dup)
 	{
 		super(packetID);
 		this.topic = topic;
@@ -79,7 +81,7 @@ public class Publish extends CountableMessage
 		int length = 0;
 		length += getPacketID() != null ? 2 : 0;
 		length += topic.length() + 2;
-		length += content.length;
+		length += content.readableBytes();
 		return length;
 	}
 
@@ -93,14 +95,14 @@ public class Publish extends CountableMessage
 		this.topic = topic;
 	}
 
-	public byte[] getContent()
+	public ByteBuf getContent()
 	{
 		return content;
 	}
 
-	public void setContent(byte[] content)
+	public void setContent(ByteBuf buf)
 	{
-		this.content = content;
+		this.content = buf;
 	}
 
 	public boolean isRetain()
