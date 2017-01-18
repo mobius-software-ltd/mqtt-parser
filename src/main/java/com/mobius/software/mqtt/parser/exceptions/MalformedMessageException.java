@@ -28,5 +28,4 @@ public class MalformedMessageException extends RuntimeException
 	{
 		super(message);
 	}
-
 }

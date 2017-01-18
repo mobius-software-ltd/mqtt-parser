@@ -859,4 +859,9 @@ public class MQParser
 
 		return buf;
 	}
+
+	public MQCache getCache()
+	{
+		return cache;
+	}
 }

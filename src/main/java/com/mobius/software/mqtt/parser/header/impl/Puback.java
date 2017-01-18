@@ -28,7 +28,7 @@ public class Puback extends CountableMessage
 {
 	public Puback()
 	{
-
+		super();
 	}
 
 	public Puback(Integer packetID)

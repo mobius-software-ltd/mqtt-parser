@@ -58,5 +58,4 @@ public enum MessageType
 			throw new MalformedMessageException(String.format("Header code undefined: %d", type));
 		return result;
 	}
-
 }
