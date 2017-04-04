@@ -53,6 +53,7 @@ public class Connect extends MQMessage
 		this.cleanSession = isClean;
 		this.keepalive = keepalive;
 		this.will = will;
+		this.protocolLevel = defaultProtocolLevel;
 	}
 
 	public Connect reInit(String username, String password, String clientID, boolean isClean, int keepalive, Will will)
@@ -63,6 +64,7 @@ public class Connect extends MQMessage
 		this.cleanSession = isClean;
 		this.keepalive = keepalive;
 		this.will = will;
+		this.protocolLevel = defaultProtocolLevel;
 		return this;
 	}
 

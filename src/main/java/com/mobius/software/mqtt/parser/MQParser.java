@@ -202,8 +202,7 @@ public class MQParser
 
 				Connect connect = (Connect) header;
 				connect.reInit(username, password, clientID, cleanSession, keepalive, will);
-				if (protocolLevel != 4)
-					connect.setProtocolLevel(protocolLevel);
+				connect.setProtocolLevel(protocolLevel);
 				break;
 
 			case CONNACK:
