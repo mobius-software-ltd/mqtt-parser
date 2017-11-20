@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mobius-software.mqtt</groupId>
 	<artifactId>parser</artifactId>
-	<version>1.0.Final</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>com.mobius-software.mqtt:parser</name>
@@ -17,6 +17,12 @@
 		</license>
 	</licenses>
 
+	<scm>
+		<url>https://github.com/mobius-software-ltd/mqtt-parser</url>
+		<connection>scm:git:git://github.com:mobius-software-ltd/mqtt-parser.git</connection>
+		<developerConnection>scm:git:git@github.com:mobius-software-ltd/mqtt-parser.git</developerConnection>
+	</scm>
+	
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -71,14 +77,14 @@
 
 	<distributionManagement>
 		<repository>
-			<id>mobius-releases-repository</id>
-			<name>Mobius Releases Repository</name>
-			<url>http://nexus.mobius-software.com:8081/nexus/content/repositories/releases/</url>
+			<id>mobius-public-releases-repository</id>
+			<name>Mobius Public Releases Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<snapshotRepository>
-			<id>mobius-snapshots-repository</id>
-			<name>Mobius Snapshots Repository</name>
-			<url>http://nexus.mobius-software.com:8081/nexus/content/repositories/snapshots</url>
+			<id>mobius-publis-snapshots-repository</id>
+			<name>Mobius Public Snapshots Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
