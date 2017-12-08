@@ -30,7 +30,6 @@ import com.mobius.software.mqtt.parser.avps.QoS;
 import com.mobius.software.mqtt.parser.avps.Text;
 import com.mobius.software.mqtt.parser.avps.Topic;
 import com.mobius.software.mqtt.parser.avps.Will;
-import com.mobius.software.mqtt.parser.header.api.MQMessage;
 import com.mobius.software.mqtt.parser.header.impl.Connect;
 
 public class ParserTests
@@ -59,7 +58,8 @@ public class ParserTests
 			// process encoded value...
 
 			// Decode message
-			MQMessage decoded = MQParser.decode(encoded);
+			//MQMessage decoded = 
+			MQParser.decode(encoded);
 			// process decoded value...
 		}
 		catch (Exception e)

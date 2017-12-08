@@ -7,5 +7,7 @@ public interface MQCache
 {
 	MQMessage borrowMessage(MessageType type);
 
+	MQMessage borrowCopy(MQMessage message);
+	
 	void returnMessage(MQMessage message);
 }
