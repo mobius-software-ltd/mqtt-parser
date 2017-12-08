@@ -1,28 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.mobius-software</groupId>
+		<artifactId>mobius-public-parent</artifactId>
+		<version>1.0.3</version>
+	</parent>
+
 	<groupId>com.mobius-software.mqtt</groupId>
 	<artifactId>parser</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+
 	<packaging>jar</packaging>
 
 	<name>com.mobius-software.mqtt:parser</name>
 	<description>Mobius MQTT PARSER</description>
-	<url>http://mobius-software.com/</url>
-
-	<licenses>
-		<license>
-			<name>LGPL license, Version 3.0</name>
-			<url>https://www.gnu.org/licenses/lgpl.txt</url>
-		</license>
-	</licenses>
 
 	<scm>
 		<url>https://github.com/mobius-software-ltd/mqtt-parser</url>
 		<connection>scm:git:git://github.com:mobius-software-ltd/mqtt-parser.git</connection>
 		<developerConnection>scm:git:git@github.com:mobius-software-ltd/mqtt-parser.git</developerConnection>
 	</scm>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -74,18 +74,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>mobius-public-releases-repository</id>
-			<name>Mobius Public Releases Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-		<snapshotRepository>
-			<id>mobius-publis-snapshots-repository</id>
-			<name>Mobius Public Snapshots Repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 </project>
