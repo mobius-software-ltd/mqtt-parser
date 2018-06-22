@@ -22,10 +22,14 @@ package com.mobius.software.mqtt.parser.header.impl;
 
 import io.netty.buffer.ByteBuf;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.avps.Topic;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
+import com.mobius.software.mqtt.parser.util.ByteBufDeserializer;
+import com.mobius.software.mqtt.parser.util.ByteBufSerializer;
 
 public class Publish extends CountableMessage
 {
@@ -95,6 +99,8 @@ public class Publish extends CountableMessage
 		this.topic = topic;
 	}
 
+	@JsonSerialize(using = ByteBufSerializer.class)
+	@JsonDeserialize(using = ByteBufDeserializer.class)
 	public ByteBuf getContent()
 	{
 		return content;

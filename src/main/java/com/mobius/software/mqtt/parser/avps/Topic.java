@@ -1,5 +1,7 @@
 package com.mobius.software.mqtt.parser.avps;
 
+import com.mobius.software.mqtt.parser.avps.Text;
+
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -23,6 +25,7 @@ package com.mobius.software.mqtt.parser.avps;
 public class Topic
 {
 	private static final String SEPARATOR = ":";
+
 	private Text name;
 	private QoS qos;
 

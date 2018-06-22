@@ -20,16 +20,23 @@ package com.mobius.software.mqtt.parser.header.api;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mobius.software.mqtt.parser.avps.MessageType;
 
 public abstract class MQMessage implements ProtocolMessage
 {
+	public static final String JSON_MESSAGE_TYPE_PROPERTY_NAME = "packet";
+
+	@JsonIgnore
 	public abstract int getLength();
 
+	@JsonProperty(JSON_MESSAGE_TYPE_PROPERTY_NAME)
 	public abstract MessageType getType();
 
 	public abstract void processBy(MQDevice device);
 
+	@JsonIgnore
 	public Protocol getProtocol()
 	{
 		return Protocol.MQTT;

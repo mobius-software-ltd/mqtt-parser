@@ -20,6 +20,7 @@ package com.mobius.software.mqtt.parser.header.impl;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.avps.Will;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
@@ -27,8 +28,8 @@ import com.mobius.software.mqtt.parser.header.api.MQMessage;
 
 public class Connect extends MQMessage
 {
-	private static final byte defaultProtocolLevel = 4;
-	private static final String PROTOCOL_NAME = "MQTT";
+	public static final byte defaultProtocolLevel = 4;
+	public static final String PROTOCOL_NAME = "MQTT";
 
 	private String username;
 	private String password;
@@ -101,7 +102,7 @@ public class Connect extends MQMessage
 		this.protocolLevel = (byte) protocolLevel;
 	}
 
-	public boolean isClean()
+	public boolean isCleanSession()
 	{
 		return cleanSession;
 	}
@@ -126,14 +127,14 @@ public class Connect extends MQMessage
 		this.will = will;
 	}
 
-	public int getKeepAlive()
+	public int getKeepalive()
 	{
 		return keepalive;
 	}
 
-	public void setKeepAlive(int keepAlive)
+	public void setKeepalive(int keepalive)
 	{
-		this.keepalive = keepAlive;
+		this.keepalive = keepalive;
 	}
 
 	public String getClientID()
@@ -146,7 +147,7 @@ public class Connect extends MQMessage
 		this.clientID = clientID;
 	}
 
-	public String getUserName()
+	public String getUsername()
 	{
 		return username;
 	}
@@ -176,6 +177,7 @@ public class Connect extends MQMessage
 		return password != null;
 	}
 
+	@JsonProperty("protocolName")
 	public String getName()
 	{
 		return PROTOCOL_NAME;

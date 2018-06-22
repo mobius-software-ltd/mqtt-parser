@@ -23,6 +23,8 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ConnackCode
 {
 	ACCEPTED(0), UNACCEPTABLE_PROTOCOL_VERSION(1), IDENTIFIER_REJECTED(2), SERVER_UNUVALIABLE(3), BAD_USER_OR_PASS(4), NOT_AUTHORIZED(5);
@@ -39,6 +41,7 @@ public enum ConnackCode
 		}
 	}
 
+    @JsonValue
 	public byte getNum()
 	{
 		return (byte) num;

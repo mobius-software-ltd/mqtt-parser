@@ -1,5 +1,7 @@
 package com.mobius.software.mqtt.parser.avps;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -73,6 +75,7 @@ public class Will
 		this.retain = retain;
 	}
 
+	@JsonIgnore
 	public boolean isValid()
 	{
 		return this.topic != null && this.topic.length() > 0 && this.content != null && this.topic.getQos() != null;

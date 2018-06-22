@@ -23,6 +23,7 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
 public enum MessageType
@@ -41,6 +42,7 @@ public enum MessageType
 		}
 	}
 
+    @JsonValue
 	public int getNum()
 	{
 		return num;
