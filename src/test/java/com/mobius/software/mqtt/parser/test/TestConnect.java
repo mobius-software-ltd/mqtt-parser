@@ -147,11 +147,11 @@ public class TestConnect
 			Connect connect = new Connect("username", "password", "clientID", true, 10, will);
 
 			Connect actual = (Connect) MQParser.decode(MQParser.encode(connect));
-			assertTrue(actual.isClean());
+			assertTrue(actual.isCleanSession());
 
 			connect.setCleanSession(false);
 			actual = (Connect) MQParser.decode(MQParser.encode(connect));
-			assertFalse(actual.isClean());
+			assertFalse(actual.isCleanSession());
 		}
 		catch (Exception e)
 		{

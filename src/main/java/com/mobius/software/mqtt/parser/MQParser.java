@@ -644,7 +644,7 @@ public class MQParser
 				buf.writeByte(connect.getProtocolLevel());
 
 				byte contentFlags = 0;
-				if (connect.isClean())
+				if (connect.isCleanSession())
 					contentFlags += 2;
 				if (connect.isWillFlag())
 				{
@@ -659,7 +659,7 @@ public class MQParser
 					contentFlags += 0x80;
 				buf.writeByte(contentFlags);
 
-				buf.writeShort(connect.getKeepAlive());
+				buf.writeShort(connect.getKeepalive());
 				buf.writeShort(connect.getClientID().length());
 				buf.writeBytes(connect.getClientID().getBytes("UTF-8"));
 
@@ -680,7 +680,7 @@ public class MQParser
 					}
 				}
 
-				String username = connect.getUserName();
+				String username = connect.getUsername();
 				if (username != null)
 				{
 					buf.writeShort(username.length());

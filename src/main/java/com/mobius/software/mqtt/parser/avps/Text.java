@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class Text
 {
 	//reference on the local buffer
@@ -206,6 +208,7 @@ public class Text
 	}
 
 	@Override
+	@JsonValue
 	public String toString()
 	{
 		return new String(chars, pos, len).trim();

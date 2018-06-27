@@ -3,6 +3,8 @@ package com.mobius.software.mqtt.parser.header.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -29,12 +31,17 @@ import io.netty.buffer.Unpooled;
 
 public abstract class MQMessage implements ProtocolMessage
 {
+	public static final String JSON_MESSAGE_TYPE_PROPERTY_NAME = "packet";
+
+	@JsonIgnore
 	public abstract int getLength();
 
+	@JsonProperty(JSON_MESSAGE_TYPE_PROPERTY_NAME)
 	public abstract MessageType getType();
 
 	public abstract void processBy(MQDevice device);
 
+	@JsonIgnore
 	public Protocol getProtocol()
 	{
 		return Protocol.MQTT;

@@ -23,6 +23,8 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum SubackCode
 {
 	ACCEPTED_QOS0(0), ACCEPTED_QOS1(1), ACCEPTED_QOS2(2), FAILURE(128);
@@ -39,6 +41,7 @@ public enum SubackCode
 		}
 	}
 
+    @JsonValue
 	public byte getNum()
 	{
 		return (byte) num;
