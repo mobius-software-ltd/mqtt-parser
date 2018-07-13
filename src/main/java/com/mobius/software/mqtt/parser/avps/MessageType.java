@@ -23,6 +23,7 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
 
@@ -53,6 +54,7 @@ public enum MessageType
 		num = leg;
 	}
 
+	@JsonCreator
 	public static MessageType valueOf(int type) throws MalformedMessageException
 	{
 		MessageType result = map.get(type);

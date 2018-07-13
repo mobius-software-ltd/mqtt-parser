@@ -23,6 +23,7 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ConnackCode
@@ -52,6 +53,7 @@ public enum ConnackCode
 		num = leg;
 	}
 
+	@JsonCreator
 	public static ConnackCode valueOf(int type)
 	{
 		return map.get(type);

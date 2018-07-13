@@ -23,6 +23,7 @@ package com.mobius.software.mqtt.parser.avps;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum SubackCode
@@ -42,9 +43,9 @@ public enum SubackCode
 	}
 
     @JsonValue
-	public byte getNum()
+	public int getNum()
 	{
-		return (byte) num;
+		return num;
 	}
 
 	private SubackCode(final int leg)
@@ -52,6 +53,7 @@ public enum SubackCode
 		num = leg;
 	}
 
+	@JsonCreator
 	public static SubackCode valueOf(int type)
 	{
 		return map.get(type);
