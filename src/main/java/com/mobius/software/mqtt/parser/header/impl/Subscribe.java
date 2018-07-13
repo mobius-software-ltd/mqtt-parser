@@ -1,5 +1,7 @@
 package com.mobius.software.mqtt.parser.header.impl;
 
+import java.util.Arrays;
+
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -22,6 +24,7 @@ package com.mobius.software.mqtt.parser.header.impl;
 
 import com.mobius.software.mqtt.parser.avps.MessageType;
 import com.mobius.software.mqtt.parser.avps.Topic;
+import com.mobius.software.mqtt.parser.avps.Topic.TopicExt;
 import com.mobius.software.mqtt.parser.header.api.CountableMessage;
 import com.mobius.software.mqtt.parser.header.api.MQDevice;
 
@@ -60,6 +63,52 @@ public class Subscribe extends CountableMessage
 		for (Topic s : this.topics)
 			length += s.getName().length() + 3;
 		return length;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = super.hashCode();
+		int topicsHash = 0;
+		if (topics != null)
+		{
+			TopicExt[] topicsExt = new TopicExt[topics.length];
+			for (int i = 0; i < topics.length; i++)
+				topicsExt[i] = topics[i].ext();
+			topicsHash = Arrays.hashCode(topicsExt);
+		}
+		result = prime * result + topicsHash;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Subscribe other = (Subscribe) obj;
+		TopicExt[] topicsExt = null;
+		if (topics != null)
+		{
+			topicsExt = new TopicExt[topics.length];
+			for (int i = 0; i < topics.length; i++)
+				topicsExt[i] = topics[i].ext();
+		}
+		TopicExt[] otherTopicsExt = null;
+		if (other.topics != null)
+		{
+			otherTopicsExt = new TopicExt[other.topics.length];
+			for (int i = 0; i < other.topics.length; i++)
+				otherTopicsExt[i] = other.topics[i].ext();
+		}
+		if (!Arrays.equals(topicsExt, otherTopicsExt))
+			return false;
+		return true;
 	}
 
 	@Override

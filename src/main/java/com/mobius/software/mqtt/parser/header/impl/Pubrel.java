@@ -60,4 +60,16 @@ public class Pubrel extends CountableMessage
 	{
 		device.processPubrel(getPacketID());
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return super.equals(obj);
+	}
 }

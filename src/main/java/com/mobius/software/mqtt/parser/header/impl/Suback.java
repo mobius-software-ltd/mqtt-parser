@@ -67,6 +67,35 @@ public class Suback extends CountableMessage
 		device.processSuback(getPacketID(), returnCodes);
 	}
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((returnCodes == null) ? 0 : returnCodes.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Suback other = (Suback) obj;
+		if (returnCodes == null)
+		{
+			if (other.returnCodes != null)
+				return false;
+		}
+		else if (!returnCodes.equals(other.returnCodes))
+			return false;
+		return true;
+	}
+
 	public List<SubackCode> getReturnCodes()
 	{
 		return returnCodes;

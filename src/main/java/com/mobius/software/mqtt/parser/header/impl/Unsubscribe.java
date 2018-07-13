@@ -1,5 +1,7 @@
 package com.mobius.software.mqtt.parser.header.impl;
 
+import java.util.Arrays;
+
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -71,6 +73,30 @@ public class Unsubscribe extends CountableMessage
 	public void processBy(MQDevice device)
 	{
 		device.processUnsubscribe(getPacketID(), topics);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(topics);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Unsubscribe other = (Unsubscribe) obj;
+		if (!Arrays.equals(topics, other.topics))
+			return false;
+		return true;
 	}
 
 	public Text[] getTopics()

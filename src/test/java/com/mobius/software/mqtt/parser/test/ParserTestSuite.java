@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(
-{ TestConnack.class, TestConnect.class, TestDisconnect.class, TestPingreq.class, TestPingresp.class, TestPuback.class, TestPubcomp.class, TestPublish.class, TestPubrec.class, TestPubrel.class, TestSuback.class, TestUnsuback.class, TestUnsubscribe.class, TestParser.class })
+{ TestConnack.class, TestConnect.class, TestDisconnect.class, TestPingreq.class, TestPingresp.class, TestPuback.class, TestPubcomp.class, TestPublish.class, TestPubrec.class, TestPubrel.class, TestSuback.class, TestUnsuback.class, TestUnsubscribe.class, TestParser.class, MqttJsonTest.class })
 public class ParserTestSuite
 {
 

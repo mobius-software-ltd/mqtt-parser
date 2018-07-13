@@ -1,5 +1,7 @@
 package com.mobius.software.mqtt.parser.avps;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -79,5 +81,42 @@ public class Will
 	public boolean isValid()
 	{
 		return this.topic != null && this.topic.length() > 0 && this.content != null && this.topic.getQos() != null;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(content);
+		result = prime * result + (retain ? 1231 : 1237);
+		result = prime * result + ((topic == null) ? 0 : topic.ext().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Will other = (Will) obj;
+		if (!Arrays.equals(content, other.content))
+			return false;
+		if (retain != other.retain)
+			return false;
+		if (topic == null)
+		{
+			if (other.topic != null)
+				return false;
+		}
+		else if (other.topic == null)
+			return false;
+		else if (!topic.ext().equals(other.topic.ext()))
+			return false;
+		return true;
 	}
 }

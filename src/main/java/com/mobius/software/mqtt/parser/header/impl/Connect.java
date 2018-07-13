@@ -92,6 +92,68 @@ public class Connect extends MQMessage
 		return length;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (cleanSession ? 1231 : 1237);
+		result = prime * result + ((clientID == null) ? 0 : clientID.hashCode());
+		result = prime * result + keepalive;
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + protocolLevel;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((will == null) ? 0 : will.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Connect other = (Connect) obj;
+		if (cleanSession != other.cleanSession)
+			return false;
+		if (clientID == null)
+		{
+			if (other.clientID != null)
+				return false;
+		}
+		else if (!clientID.equals(other.clientID))
+			return false;
+		if (keepalive != other.keepalive)
+			return false;
+		if (password == null)
+		{
+			if (other.password != null)
+				return false;
+		}
+		else if (!password.equals(other.password))
+			return false;
+		if (protocolLevel != other.protocolLevel)
+			return false;
+		if (username == null)
+		{
+			if (other.username != null)
+				return false;
+		}
+		else if (!username.equals(other.username))
+			return false;
+		if (will == null)
+		{
+			if (other.will != null)
+				return false;
+		}
+		else if (!will.equals(other.will))
+			return false;
+		return true;
+	}
+
 	public int getProtocolLevel()
 	{
 		return protocolLevel;

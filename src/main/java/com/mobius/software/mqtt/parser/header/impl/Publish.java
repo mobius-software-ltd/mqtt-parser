@@ -1,5 +1,14 @@
 package com.mobius.software.mqtt.parser.header.impl;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mobius.software.mqtt.parser.avps.MessageType;
+import com.mobius.software.mqtt.parser.avps.Topic;
+import com.mobius.software.mqtt.parser.header.api.CountableMessage;
+import com.mobius.software.mqtt.parser.header.api.MQDevice;
+import com.mobius.software.mqtt.parser.util.ByteBufDeserializer;
+import com.mobius.software.mqtt.parser.util.ByteBufSerializer;
+
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -21,15 +30,6 @@ package com.mobius.software.mqtt.parser.header.impl;
  */
 
 import io.netty.buffer.ByteBuf;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.mobius.software.mqtt.parser.avps.MessageType;
-import com.mobius.software.mqtt.parser.avps.Topic;
-import com.mobius.software.mqtt.parser.header.api.CountableMessage;
-import com.mobius.software.mqtt.parser.header.api.MQDevice;
-import com.mobius.software.mqtt.parser.util.ByteBufDeserializer;
-import com.mobius.software.mqtt.parser.util.ByteBufSerializer;
 
 public class Publish extends CountableMessage
 {
@@ -89,6 +89,51 @@ public class Publish extends CountableMessage
 		return length;
 	}
 
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result + (dup ? 1231 : 1237);
+		result = prime * result + (retain ? 1231 : 1237);
+		result = prime * result + ((topic == null) ? 0 : topic.ext().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Publish other = (Publish) obj;
+		if (content == null)
+		{
+			if (other.content != null)
+				return false;
+		}
+		else if (!content.equals(other.content))
+			return false;
+		if (dup != other.dup)
+			return false;
+		if (retain != other.retain)
+			return false;
+		if (topic == null)
+		{
+			if (other.topic != null)
+				return false;
+		}
+		else if (other.topic == null)
+			return false;
+		else if (!topic.ext().equals(other.topic.ext()))
+			return false;
+		return true;
+	}
+
 	public Topic getTopic()
 	{
 		return topic;
@@ -130,4 +175,5 @@ public class Publish extends CountableMessage
 	{
 		this.dup = dup;
 	}
+
 }

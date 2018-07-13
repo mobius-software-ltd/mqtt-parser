@@ -1,7 +1,5 @@
 package com.mobius.software.mqtt.parser.avps;
 
-import com.mobius.software.mqtt.parser.avps.Text;
-
 /**
  * Mobius Software LTD
  * Copyright 2015-2016, Mobius Software LTD
@@ -26,8 +24,8 @@ public class Topic
 {
 	private static final String SEPARATOR = ":";
 
-	private Text name;
-	private QoS qos;
+	protected Text name;
+	protected QoS qos;
 
 	public Topic()
 	{
@@ -40,6 +38,11 @@ public class Topic
 		this.qos = qos;
 	}
 
+	public TopicExt ext() 
+	{
+		return new TopicExt(name, qos);
+	}
+	
 	public String toString()
 	{
 		return name.toString() + SEPARATOR + qos;
@@ -102,5 +105,50 @@ public class Topic
 	public static Topic valueOf(Text topic, QoS qos)
 	{
 		return new Topic(topic, qos);
+	}
+
+	public static class TopicExt extends Topic
+	{
+		public TopicExt()
+		{
+			super();
+		}
+
+		public TopicExt(Text name, QoS qos)
+		{
+			super(name, qos);
+		}
+
+		@Override
+		public int hashCode()
+		{
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((qos == null) ? 0 : qos.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Topic other = (Topic) obj;
+			if (name == null)
+			{
+				if (other.name != null)
+					return false;
+			}
+			else if (!name.equals(other.name))
+				return false;
+			if (qos != other.qos)
+				return false;
+			return true;
+		}
 	}
 }

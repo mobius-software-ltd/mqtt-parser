@@ -54,6 +54,33 @@ public class Connack extends MQMessage
 	}
 
 	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((returnCode == null) ? 0 : returnCode.hashCode());
+		result = prime * result + (sessionPresent ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Connack other = (Connack) obj;
+		if (returnCode != other.returnCode)
+			return false;
+		if (sessionPresent != other.sessionPresent)
+			return false;
+		return true;
+	}
+
+	@Override
 	public void processBy(MQDevice device)
 	{
 		device.processConnack(returnCode, sessionPresent);
