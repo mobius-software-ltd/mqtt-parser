@@ -99,6 +99,12 @@ public class Unsubscribe extends CountableMessage
 		return true;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Unsubscribe [topics=" + Arrays.toString(topics) + ", getPacketID()=" + getPacketID() + "]";
+	}
+
 	public Text[] getTopics()
 	{
 		return topics;

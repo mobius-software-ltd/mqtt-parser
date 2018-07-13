@@ -154,6 +154,12 @@ public class Connect extends MQMessage
 		return true;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Connect [username=" + username + ", password=" + password + ", clientID=" + clientID + ", protocolLevel=" + protocolLevel + ", cleanSession=" + cleanSession + ", keepalive=" + keepalive + ", will=" + will + "]";
+	}
+
 	public int getProtocolLevel()
 	{
 		return protocolLevel;

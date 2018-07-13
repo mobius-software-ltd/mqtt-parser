@@ -61,4 +61,10 @@ public class Pingresp extends MQMessage
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Pingresp";
+	}
 }

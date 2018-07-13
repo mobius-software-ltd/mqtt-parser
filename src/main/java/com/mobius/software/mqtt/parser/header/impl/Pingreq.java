@@ -61,4 +61,10 @@ public class Pingreq extends MQMessage
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Pingreq";
+	}
 }

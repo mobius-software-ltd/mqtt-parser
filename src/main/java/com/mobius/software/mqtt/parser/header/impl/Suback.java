@@ -101,6 +101,12 @@ public class Suback extends CountableMessage
 		return returnCodes;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Suback [returnCodes=" + returnCodes + ", getPacketID()=" + getPacketID() + "]";
+	}
+
 	public void setReturnCodes(List<SubackCode> returnCodes)
 	{
 		this.returnCodes = returnCodes;

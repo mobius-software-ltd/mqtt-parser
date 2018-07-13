@@ -134,6 +134,12 @@ public class Publish extends CountableMessage
 		return true;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Publish [topic=" + topic + ", content=" + content + ", retain=" + retain + ", dup=" + dup + ", getPacketID()=" + getPacketID() + "]";
+	}
+
 	public Topic getTopic()
 	{
 		return topic;

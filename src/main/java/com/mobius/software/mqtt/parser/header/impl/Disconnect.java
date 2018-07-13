@@ -61,4 +61,10 @@ public class Disconnect extends MQMessage
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Disconnect";
+	}
 }

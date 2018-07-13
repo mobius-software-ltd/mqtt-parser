@@ -58,6 +58,12 @@ public abstract class CountableMessage extends MQMessage
 		return true;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "packetID=" + packetID;
+	}
+
 	public CountableMessage(Integer packetID)
 	{
 		this.packetID = packetID;

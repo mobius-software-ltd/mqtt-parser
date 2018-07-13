@@ -72,4 +72,10 @@ public class Unsuback extends CountableMessage
 	{
 		return super.equals(obj);
 	}
+	
+	@Override
+	public String toString()
+	{
+		return getType() + " [getPacketID()=" + getPacketID() + "]";
+	}
 }

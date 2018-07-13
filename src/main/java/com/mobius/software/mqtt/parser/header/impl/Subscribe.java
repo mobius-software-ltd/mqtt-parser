@@ -112,6 +112,12 @@ public class Subscribe extends CountableMessage
 	}
 
 	@Override
+	public String toString()
+	{
+		return "Subscribe [topics=" + Arrays.toString(topics) + ", getPacketID()=" + getPacketID() + "]";
+	}
+
+	@Override
 	public MessageType getType()
 	{
 		return MessageType.SUBSCRIBE;

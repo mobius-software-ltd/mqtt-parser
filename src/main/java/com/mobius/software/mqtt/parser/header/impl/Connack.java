@@ -81,6 +81,12 @@ public class Connack extends MQMessage
 	}
 
 	@Override
+	public String toString()
+	{
+		return "Connack [sessionPresent=" + sessionPresent + ", returnCode=" + returnCode + "]";
+	}
+
+	@Override
 	public void processBy(MQDevice device)
 	{
 		device.processConnack(returnCode, sessionPresent);
