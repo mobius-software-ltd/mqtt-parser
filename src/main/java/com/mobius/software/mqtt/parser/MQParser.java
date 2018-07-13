@@ -1,5 +1,16 @@
 package com.mobius.software.mqtt.parser;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mobius.software.mqtt.parser.avps.*;
+import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
+import com.mobius.software.mqtt.parser.header.api.CountableMessage;
+import com.mobius.software.mqtt.parser.header.api.MQMessage;
+import com.mobius.software.mqtt.parser.header.impl.*;
+import com.mobius.software.mqtt.parser.util.StringVerifier;
+
 /**
 * Mobius Software LTD
 * Copyright 2015-2016, Mobius Software LTD
@@ -22,17 +33,6 @@ package com.mobius.software.mqtt.parser;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mobius.software.mqtt.parser.avps.*;
-import com.mobius.software.mqtt.parser.exceptions.MalformedMessageException;
-import com.mobius.software.mqtt.parser.header.api.CountableMessage;
-import com.mobius.software.mqtt.parser.header.api.MQMessage;
-import com.mobius.software.mqtt.parser.header.impl.*;
-import com.mobius.software.mqtt.parser.util.StringVerifier;
 
 public class MQParser
 {
@@ -342,6 +342,142 @@ public class MQParser
 		catch (UnsupportedEncodingException e)
 		{
 			throw new MalformedMessageException("unsupported string encoding:" + e.getMessage());
+		}
+	}
+
+	public static void validate(MQMessage message)
+	{
+		if (message.getType() == null)
+			throw new MalformedMessageException("message type is null");
+
+		switch (message.getType())
+		{
+		case CONNECT:
+			Connect connect = (Connect) message;
+			if (connect.getProtocolLevel() != Connect.defaultProtocolLevel)
+				throw new MalformedMessageException(message.getType() + " invalid protocol level " + connect.getProtocolLevel());
+
+			if (connect.getUsername() != null && !StringVerifier.verify(connect.getUsername()))
+				throw new MalformedMessageException(message.getType() + " username contains restricted characters: U+0000, U+D000-U+DFFF");
+
+			if (connect.getPassword() != null && !StringVerifier.verify(connect.getPassword()))
+				throw new MalformedMessageException(message.getType() + " password contains restricted characters: U+0000, U+D000-U+DFFF");
+
+			if (connect.getClientID() == null)
+				throw new MalformedMessageException(message.getType() + " ClientID is null");
+
+			if (!StringVerifier.verify(connect.getClientID()))
+				throw new MalformedMessageException(message.getType() + " ClientID contains restricted characters: U+0000, U+D000-U+DFFF");
+
+			if (connect.getKeepalive() < 0)
+				throw new MalformedMessageException(message.getType() + " invalid negative keepalive " + connect.getKeepalive());
+
+			if (connect.getWill() != null)
+			{
+				if (!connect.getWill().isValid())
+					throw new MalformedMessageException(message.getType() + ", will is invalid");
+
+				if (!StringVerifier.verify(connect.getWill().getTopic().getName().toString()))
+					throw new MalformedMessageException("will topic contains restricted characters: U+0000, U+D000-U+DFFF");
+			}
+			break;
+
+		case CONNACK:
+			Connack connack = (Connack) message;
+			if (connack.getReturnCode() == null)
+				throw new MalformedMessageException(message.getType() + " return code is null");
+			break;
+
+		case PUBACK:
+		case PUBREC:
+		case PUBREL:
+		case PUBCOMP:
+		case UNSUBACK:
+			CountableMessage countable = (CountableMessage) message;
+			if (countable.getPacketID() == null || countable.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " packetID is invalid " + countable.getPacketID());
+			break;
+
+		case PUBLISH:
+			Publish publish = (Publish) message;
+			if (publish.getTopic() == null || publish.getTopic().getName() == null || !StringVerifier.verify(publish.getTopic().getName().toString()))
+				throw new MalformedMessageException(message.getType() + " topic is invalid");
+
+			if (publish.getTopic().getQos() == null)
+				throw new MalformedMessageException(message.getType() + " qos is invalid");
+
+			if (publish.getContent() == null)
+				throw new MalformedMessageException(message.getType() + " content is invalid");
+
+			if (publish.getPacketID() != null && publish.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " packetID is invalid " + publish.getPacketID());
+
+			if (publish.getTopic().getQos() == QoS.AT_MOST_ONCE && publish.getPacketID() != null)
+				throw new MalformedMessageException(message.getType() + " invalid packetID encoding: qos=" + publish.getTopic().getQos() + ",packetID=" + publish.getPacketID());
+
+			if (publish.getTopic().getQos() != QoS.AT_MOST_ONCE && publish.getPacketID() == null)
+				throw new MalformedMessageException(message.getType() + " invalid packetID encoding: qos=" + publish.getTopic().getQos() + ",packetID=" + publish.getPacketID());
+
+			if (publish.getPacketID() != null && publish.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " invalid packetID encoding " + publish.getPacketID());
+
+			if (publish.isDup() && publish.getTopic().getQos() == QoS.AT_MOST_ONCE)
+				throw new MalformedMessageException(message.getType() + ", QoS-0 dup flag present");
+			break;
+
+		case SUBACK:
+			Suback suback = (Suback) message;
+			if (suback.getPacketID() == null || suback.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " packetID is invalid " + suback.getPacketID());
+
+			if (suback.getReturnCodes() == null || suback.getReturnCodes().isEmpty() || suback.getReturnCodes().contains(null))
+				throw new MalformedMessageException(message.getType() + " invalid return codes " + suback.getReturnCodes());
+			break;
+
+		case SUBSCRIBE:
+			Subscribe subscribe = (Subscribe) message;
+			if (subscribe.getPacketID() == null || subscribe.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " packetID is invalid " + subscribe.getPacketID());
+
+			if (subscribe.getTopics() == null || subscribe.getTopics().length == 0)
+				throw new MalformedMessageException(message.getType() + " no topics");
+
+			for (Topic subscribeTopic : subscribe.getTopics())
+			{
+				if (subscribeTopic == null || subscribeTopic.getName() == null)
+					throw new MalformedMessageException(message.getType() + " invalid topic encoding");
+
+				if (!StringVerifier.verify(subscribeTopic.getName().toString()))
+					throw new MalformedMessageException(message.getType() + " topic contains restricted characters: U+0000, U+D000-U+DFFF");
+
+				if (subscribeTopic.getQos() == null)
+					throw new MalformedMessageException(message.getType() + " topic qos is null");
+			}
+			break;
+
+		case UNSUBSCRIBE:
+			Unsubscribe unsubscribe = (Unsubscribe) message;
+			if (unsubscribe.getPacketID() == null || unsubscribe.getPacketID() < 0)
+				throw new MalformedMessageException(message.getType() + " packetID is invalid " + unsubscribe.getPacketID());
+
+			if (unsubscribe.getTopics() == null || unsubscribe.getTopics().length == 0)
+				throw new MalformedMessageException(message.getType() + " no topics");
+
+			for (Text unsubscribeTopic : unsubscribe.getTopics())
+			{
+				if (unsubscribeTopic == null)
+					throw new MalformedMessageException(message.getType() + " invalid topic encoding");
+
+				if (!StringVerifier.verify(unsubscribeTopic.toString()))
+					throw new MalformedMessageException(message.getType() + " topic contains restricted characters: U+0000, U+D000-U+DFFF");
+			}
+			break;
+
+		case PINGREQ:
+		case PINGRESP:
+		case DISCONNECT:
+		default:
+			break;
 		}
 	}
 
@@ -838,7 +974,8 @@ public class MQParser
 			throw new MalformedMessageException("header length exceeds maximum of 26843545 bytes");
 
 		byte encByte;
-		int pos = 0, l = length;
+		int pos = 0,
+				l = length;
 		do
 		{
 			encByte = (byte) (l % 128);
@@ -862,5 +999,18 @@ public class MQParser
 	public MQCache getCache()
 	{
 		return cache;
+	}
+
+	public static boolean isValid(MQMessage message)
+	{
+		try
+		{
+			validate(message);
+			return true;
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
 	}
 }
