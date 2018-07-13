@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum Protocol
 {
-	MQTT(1), MQTT_SN(2), COAP(3), AMQP(4);
+	MQTT(1), MQTT_SN(2), COAP(3), AMQP(4), MQTT_WS(5), MQTT_TLS(6);
 
 	private static final Map<Integer, Protocol> intToTypeMap = new HashMap<Integer, Protocol>();
 	private static final Map<String, Protocol> strToTypeMap = new HashMap<String, Protocol>();
