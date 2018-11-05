@@ -36,6 +36,8 @@ import io.netty.buffer.Unpooled;
 
 public class MQParser
 {
+	public static final int DEFAULT_MAX_MESSAGE_SIZE = 65536;
+	
 	public static final Disconnect DISCONNECT = new Disconnect();
 	public static final Pingreq PINGREQ = new Pingreq();
 	public static final Pingresp PINGRESP = new Pingresp();
@@ -48,6 +50,11 @@ public class MQParser
 	}
 
 	public static ByteBuf next(ByteBuf buf) throws MalformedMessageException
+	{
+		return next(buf, DEFAULT_MAX_MESSAGE_SIZE);
+	}
+
+	public static ByteBuf next(ByteBuf buf, int maxMessageSize) throws MalformedMessageException
 	{
 		buf.markReaderIndex();
 		MessageType type = MessageType.valueOf(((buf.readByte() >> 4) & 0xf));
@@ -73,11 +80,12 @@ public class MQParser
 			int result = length.getLength() + length.getSize() + 1;
 			if (result > buf.readableBytes())
 				throw new MalformedMessageException("invalid length decoding for " + type + " result length:" + result + ", in buffer:" + buf.readableBytes());
-
+			if(result  > maxMessageSize)
+				throw new MalformedMessageException("message length exceeds limit " + maxMessageSize);
 			return Unpooled.buffer(result);
 		}
 	}
-
+	
 	public MQMessage decodeUsingCache(ByteBuf buf) throws MalformedMessageException
 	{
 		byte fixedHeader = buf.readByte();
