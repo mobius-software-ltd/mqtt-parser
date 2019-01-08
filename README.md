@@ -1,6 +1,6 @@
 # MQTT parser
 
-MQTT parser is a library designed for encoding and decoding of MQTT 3.1.1 packets. It is written in Java. MQTT parser is developed by [Mobius Software](http://mobius-software.com).
+MQTT parser is a library designed for encoding and decoding of MQTT 3.1.1 packets. It is written in Java. MQTT parser is developed by [Mobius Software](https://www.mobius-software.com/).
 
 
 ## Getting Started
